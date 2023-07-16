@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
 const app = express();
-const port = 443;
+const port = 3000;
 const productController = require('./controllers/productController');
 
 app.use(express.json());
