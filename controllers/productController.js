@@ -1,10 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const db = require('../lib/db.js');
+
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const uuid = require('uuid');
+
+const userMiddleware = require('../middleware/users.js');
+
 
 // Ruta para obtener todos los productos
-router.get('/products', (req, res) => {
-  // Lógica para obtener todos los productos desde la base de datos MySQL
+router.get('/api/products', userMiddleware.isLoggedIn, (req, res, next) => {
   db.query('SELECT * FROM producto', (error, results) => {
     if (error) {
       console.error('Error al obtener los productos:', error);
@@ -13,10 +19,12 @@ router.get('/products', (req, res) => {
       res.send(results);
     }
   });
+
 });
 
+
 // Ruta para obtener un producto por su ID
-router.get('/products/:id', (req, res) => {
+router.get('/products/:id',  userMiddleware.isLoggedIn, (req, res, next) => {
   // Lógica para obtener un producto por su ID desde la base de datos MySQL
   const productId = req.params.id;
   db.query('SELECT * FROM products WHERE id = ?', [productId], (error, results) => {
@@ -32,7 +40,7 @@ router.get('/products/:id', (req, res) => {
 });
 
 // Ruta para crear un nuevo producto
-router.post('/products', (req, res) => {
+router.post('/products', userMiddleware.isLoggedIn, (req, res, next) => {
   // Lógica para crear un nuevo producto en la base de datos MySQL
   const productData = req.body;
   db.query('INSERT INTO products SET ?', [productData], (error, results) => {
@@ -46,7 +54,7 @@ router.post('/products', (req, res) => {
 });
 
 // Ruta para actualizar un producto existente
-router.put('/products/:id', (req, res) => {
+router.put('/products/:id',  userMiddleware.isLoggedIn, (req, res, next) => {
   // Lógica para actualizar un producto existente en la base de datos MySQL
   const productId = req.params.id;
   const productData = req.body;
@@ -63,7 +71,7 @@ router.put('/products/:id', (req, res) => {
 });
 
 // Ruta para eliminar un producto existente
-router.delete('/products/:id', (req, res) => {
+router.delete('/products/:id',  userMiddleware.isLoggedIn, (req, res, next) => {
   // Lógica para eliminar un producto existente de la base de datos MySQL
   const productId = req.params.id;
   db.query('DELETE FROM products WHERE id = ?', [productId], (error, results) => {
