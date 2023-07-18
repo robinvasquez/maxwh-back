@@ -1,2 +1,2 @@
-web: npm install
-node index,js
+web: npm install -g npm@9.8.0
+web: node index.js
